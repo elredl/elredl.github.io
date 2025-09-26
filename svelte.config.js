@@ -1,7 +1,7 @@
 // svelte.config.js
 import adapter from '@sveltejs/adapter-static';
 
-const base = process.env.BASE_PATH ?? ''; // '' for user repo, '/REPO' for project repo
+const base = ''; // '' for user repo, '/REPO' for project repo
 
 /** @type {import('@sveltejs/kit').Config} */
 const config = {
