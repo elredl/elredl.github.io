@@ -19,28 +19,26 @@
   <!-- Top nav -->
   <div class="sticky top-0 z-20 backdrop-blur bg-black/30 border-b border-zinc-800">
     <nav class="max-w-5xl mx-auto px-4 py-3 flex items-center justify-between">
-      <a href="#top" class="text-sm tracking-widest uppercase text-zinc-300">Quantum • ML</a>
-      <div class="hidden sm:flex items-center gap-4 text-sm">
-        <a href="#about" class="hover:text-white text-zinc-300">About</a>
-        <a href="#projects" class="hover:text-white text-zinc-300">Projects</a>
-        <a href="#research" class="hover:text-white text-zinc-300">Research</a>
-        <a href="#contact" class="hover:text-white text-zinc-300">Contact</a>
+      <a class="text-sm tracking-widest uppercase text-zinc-300">LEO RODOLICO</a>
+      <div class="hidden sm:flex items-center gap-4 text-sm text-zinc-300">
+        <a href="#about" class="hover:text-white">About</a>
+        <a href="#projects" class="hover:text-white">Projects</a>
+        <a href="#research" class="hover:text-white">Research</a>
+        <a href="#contact" class="hover:text-white">Contact</a>
       </div>
     </nav>
   </div>
 
   <!-- Hero -->
   <header id="top" class="max-w-5xl mx-auto px-4 pt-16 md:pt-24 pb-10">
-    <p class="text-[10px] tracking-[0.35em] uppercase text-zinc-400">Quantum × Machine Learning</p>
+    <p class="text-[10px] tracking-[0.35em] uppercase text-zinc-400">Quantum × Machine Learning × Artificial Intelligence</p>
     <h1 class="text-4xl md:text-6xl font-semibold mt-3 leading-tight">Leo Rodolico</h1>
     <p class="mt-5 text-zinc-300 max-w-2xl">
       I build quiet, measurable systems at the intersection of <span class="text-white">quantum optimization</span> and <span class="text-white">modern ML</span> — with an emphasis on QUBO/Ising design, annealing vs. variational tradeoffs, and honest evaluation.
     </p>
     <div class="mt-6 flex gap-3">
-      <a href="#projects" class="px-[1px] rounded-xl bg-gradient-to-r from-cyan-400 to-fuchsia-500">
-        <span class="block px-4 py-2 rounded-[10px] bg-black text-sm font-medium">View Projects</span>
-      </a>
-      <a href="#contact" class="px-4 py-2 rounded-xl bg-zinc-900 ring-1 ring-zinc-800 text-sm hover:ring-zinc-500">Contact</a>
+      <a href="#projects" class="px-4 py-2 rounded-xl bg-zinc-900 ring-1 ring-zinc-800 text-sm hover:ring-zinc-500">LinkedIn</a>
+      <a href="#contact" class="px-4 py-2 rounded-xl bg-zinc-900 ring-1 ring-zinc-800 text-sm hover:ring-zinc-500">Resume</a>
     </div>
 
     <!-- Stats row -->
@@ -203,8 +201,8 @@
       <form on:submit|preventDefault={submit} class="grid gap-3 max-w-xl">
         <input bind:value={email} required placeholder="Your email" class="px-4 py-2 rounded-xl bg-zinc-950 ring-1 ring-zinc-800 focus:outline-none focus:ring-cyan-500" />
         <textarea bind:value={message} required placeholder="Message" rows="4" class="px-4 py-2 rounded-xl bg-zinc-950 ring-1 ring-zinc-800 focus:outline-none focus:ring-cyan-500"></textarea>
-        <button class="justify-self-start px-[1px] rounded-xl bg-gradient-to-r from-cyan-400 to-fuchsia-500">
-          <span class="block px-4 py-2 rounded-[10px] bg-black text-sm font-medium">Send</span>
+        <button class="justify-self-start px-[1px] rounded-xl">
+          <span class="px-4 py-2 rounded-xl bg-zinc-900 ring-1 ring-zinc-800 text-sm hover:ring-zinc-500">Send</span>
         </button>
       </form>
     </section>
