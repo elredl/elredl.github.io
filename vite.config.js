@@ -6,6 +6,6 @@ import tailwind from "@tailwindcss/vite";
 // If it's a *user page* repo (USERNAME.github.io), set base to "/".
 const isProjectPage = false; // change to false for USERNAME.github.io
 export default defineConfig({
-  base: isProjectPage ? "/quantum-ml-site/" : "/",
+  base: isProjectPage ? "/elredl.github.io/" : "/",
   plugins: [react(), tailwind()],
 });
