@@ -550,7 +550,7 @@
         Benchmarking Quantum Annealing
       </h1>
       <p class="text-sm md:text-base text-neutral-400">
-        Subtitle or description of the presentation.
+        By Leo Rodolico
       </p>
     </header>
 
