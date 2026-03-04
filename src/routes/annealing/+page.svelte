@@ -1,7 +1,6 @@
 <!-- QuantumAnnealing.svelte -->
 
 <script lang="ts">
-  import { Markdown } from 'svelte-exmarkdown';
   import ClassicalAnnealingDemo from "$lib/ClassicalAnnealingDemo.svelte";
 
   type Section = {
@@ -541,92 +540,255 @@
         `
     }
   ];
+
+  const allSections: Section[] = [
+    ...sections,
+    {
+      id: 4,
+      question: "Bibliography",
+      answer: bibliography
+    }
+  ];
+
+  let activeSectionIndex = 0;
+  let activeChunkIndex = 0;
+  let showDemo = false;
+
+  const splitChunks = (html: string, sectionId: number) => {
+    if (sectionId === 4) return [html.trim()];
+
+    return html
+      .split(/<hr class="my-4 border border-amber-400\/40"\s*\/>/g)
+      .map((chunk) => chunk.trim())
+      .filter(Boolean);
+  };
+
+  $: activeSection = allSections[activeSectionIndex];
+  $: chunks = splitChunks(activeSection.answer, activeSection.id);
+  $: totalChunks = chunks.length;
+  $: activeChunk = chunks[activeChunkIndex] ?? "";
+  $: chunkImages = activeChunk.match(/<img\b[^>]*>/gi) ?? [];
+  $: hasImages = chunkImages.length > 0;
+  $: chunkTextHtml = hasImages ? activeChunk.replace(/<img\b[^>]*>/gi, "") : activeChunk;
+  $: canPrevChunk = activeChunkIndex > 0;
+  $: canNextChunk = activeChunkIndex < totalChunks - 1;
+
+  const setSection = (index: number) => {
+    activeSectionIndex = index;
+    activeChunkIndex = 0;
+    showDemo = false;
+  };
+
+  const prevChunk = () => {
+    if (canPrevChunk) activeChunkIndex -= 1;
+  };
+
+  const nextChunk = () => {
+    if (canNextChunk) {
+      activeChunkIndex += 1;
+      return;
+    }
+
+    if (activeSectionIndex < allSections.length - 1) {
+      setSection(activeSectionIndex + 1);
+    }
+  };
+
+  const prevSection = () => {
+    if (activeSectionIndex > 0) setSection(activeSectionIndex - 1);
+  };
+
+  const nextSection = () => {
+    if (activeSectionIndex < allSections.length - 1) setSection(activeSectionIndex + 1);
+  };
+
+  const handleKeydown = (event: KeyboardEvent) => {
+    if (event.key === "ArrowRight") nextChunk();
+    if (event.key === "ArrowLeft") prevChunk();
+    if (event.key === "ArrowDown") nextSection();
+    if (event.key === "ArrowUp") prevSection();
+  };
 </script>
 
-<div class="min-h-screen bg-neutral-950 text-neutral-100 font-sans">
-  <div class="mx-auto max-w-4xl px-4 py-10 space-y-10">
-    <header class="text-center space-y-3">
-      <h1 class="text-3xl md:text-4xl font-semibold tracking-tight text-amber-300">
-        Benchmarking Quantum Annealing
-      </h1>
-      <p class="text-sm md:text-base text-neutral-400">
-        By Leo Rodolico
-      </p>
+<svelte:window on:keydown={handleKeydown} />
+
+<div class="h-[100dvh] overflow-hidden bg-neutral-950 text-neutral-100 font-sans">
+  <div class="pointer-events-none absolute inset-0">
+    <div class="absolute -top-16 right-[15%] h-64 w-64 rounded-full bg-amber-400/10 blur-3xl"></div>
+    <div class="absolute top-44 -left-16 h-72 w-72 rounded-full bg-cyan-500/10 blur-3xl"></div>
+  </div>
+
+  <div class="relative mx-auto h-full max-w-[1800px] p-3 md:p-4 grid grid-rows-[auto,1fr,auto] gap-3">
+    <header class="rounded-2xl border border-amber-400/30 bg-neutral-900/80 px-4 py-3 md:px-6 md:py-4 flex items-center justify-between gap-4">
+      <div>
+        <h1 class="text-xl md:text-2xl font-semibold tracking-tight text-amber-300">Benchmarking Quantum Annealing</h1>
+        <p class="text-xs md:text-sm text-neutral-400">Interactive briefing · Use arrow keys to navigate</p>
+      </div>
+      <div class="text-xs text-right text-neutral-400">
+        <div>Section {activeSectionIndex + 1} / {allSections.length}</div>
+        <div>Card {activeChunkIndex + 1} / {totalChunks}</div>
+      </div>
     </header>
 
-    <main class="space-y-10">
-      {#each sections as section}
-        <section
-          id={"section-" + section.id}
-          class="rounded-3xl bg-neutral-900/80 border border-amber-400/40 shadow-xl shadow-black/40 p-6 md:p-8 space-y-6"
-        >
-          <!-- Tag -->
-          <div
-            class="inline-flex items-center gap-2 rounded-full bg-amber-400/10 px-3 py-1 text-xs font-medium text-amber-300"
+    <main class="min-h-0 h-full flex gap-3">
+      <aside class="w-72 shrink-0 h-full min-h-0 rounded-2xl border border-amber-400/30 bg-neutral-900/80 p-3 flex flex-col gap-2">
+        {#each allSections as section, idx}
+          <button
+            type="button"
+            on:click={() => setSection(idx)}
+            class={`w-full text-left rounded-xl px-3 py-2.5 text-sm transition ${
+              idx === activeSectionIndex
+                ? "bg-amber-400/20 text-amber-100 ring-1 ring-amber-300/40"
+                : "bg-neutral-950/60 text-neutral-300 ring-1 ring-neutral-700 hover:ring-neutral-500"
+            }`}
           >
-            <span class="h-1.5 w-1.5 rounded-full bg-amber-400"></span>
-            Question {section.id}
-          </div>
+            <div class="text-[10px] uppercase tracking-[0.2em] opacity-70">{idx === allSections.length - 1 ? "References" : `Question ${section.id}`}</div>
+            <div class="mt-1 leading-tight">{section.question}</div>
+          </button>
+        {/each}
 
-          <!-- Question -->
-          <h2 class="text-2xl font-semibold text-amber-100">
-            {section.question}
-          </h2>
+        <div class="mt-auto grid grid-cols-2 gap-2 pt-2">
+          <button type="button" on:click={prevSection} class="rounded-lg bg-neutral-950 ring-1 ring-neutral-700 px-3 py-2 text-xs hover:ring-neutral-500">Prev section</button>
+          <button type="button" on:click={nextSection} class="rounded-lg bg-neutral-950 ring-1 ring-neutral-700 px-3 py-2 text-xs hover:ring-neutral-500">Next section</button>
+        </div>
+      </aside>
 
-          <!-- Answer -->
-          <div class="space-y-3">
-            <p
-              class="text-xs font-semibold uppercase tracking-[0.25em] text-amber-500/80"
+      <section class="min-w-0 flex-1 h-full min-h-0 rounded-2xl border border-amber-400/30 bg-neutral-900/80 p-5 md:p-6 flex flex-col gap-3">
+        <div class="flex items-center justify-between gap-3">
+          <h2 class="text-lg md:text-2xl font-semibold text-amber-100 leading-tight">{activeSection.question}</h2>
+          {#if activeSection.id === 1}
+            <button
+              type="button"
+              on:click={() => (showDemo = !showDemo)}
+              class="rounded-lg bg-cyan-500/15 text-cyan-100 ring-1 ring-cyan-400/40 px-3 py-1.5 text-xs"
             >
-              Answer
-            </p>
-            <div class="prose prose-invert max-w-none text-neutral-200 break-words overflow-hidden">
-              {@html section.answer}
+              {showDemo ? "Hide demo" : "Show demo"}
+            </button>
+          {/if}
+        </div>
+
+        <div class="content-frame min-h-0 rounded-xl border border-amber-400/20 bg-neutral-950/70 p-4 md:p-5 overflow-hidden">
+          {#if hasImages}
+            <div class="content-split h-full overflow-y-auto pr-2">
+              <article class="slide-content prose prose-invert max-w-none text-sm md:text-base">
+                {@html chunkTextHtml}
+              </article>
+              <aside class="media-column">
+                <div class="media-stack">
+                  {#each chunkImages as imageHtml}
+                    <div class="media-frame">
+                      {@html imageHtml}
+                    </div>
+                  {/each}
+                </div>
+              </aside>
             </div>
+          {:else}
+            <article class="slide-content h-full overflow-y-auto pr-2 prose prose-invert max-w-none text-sm md:text-base">
+              {@html activeChunk}
+            </article>
+          {/if}
+        </div>
+
+        {#if showDemo && activeSection.id === 1}
+          <div class="rounded-xl border border-cyan-400/30 bg-neutral-950/70 p-3">
+            <p class="mb-2 text-[11px] uppercase tracking-[0.22em] text-cyan-300">Classical annealing demo</p>
+            <ClassicalAnnealingDemo />
           </div>
+        {/if}
 
-          <!-- Visuals / Interactive -->
-          {#if section.id === 1}
-          <div class="space-y-4">
-            <p  
-              class="text-xs font-semibold uppercase tracking-[0.25em] text-amber-500/80"
-            >
-              Classical Annealing Demo
-            </p>
-
-            <div
-              class="rounded-xl border border-amber-300/40 bg-neutral-950/70 p-4 md:p-5"
-            >
-                <ClassicalAnnealingDemo />
-            </div>
-          </div>
-          {/if} 
-        </section>
-      {/each}
-        <section
-          id={"bibliography"}
-          class="rounded-3xl bg-neutral-900/80 border border-amber-400/40 shadow-xl shadow-black/40 p-6 md:p-8 space-y-6"
-        >
-
-          <!-- Question -->
-          <h2 class="text-2xl font-semibold text-amber-100">
-            Bibliography
-          </h2>
-
-          <!-- Answer -->
-          <div class="space-y-3">
-            <div class="prose prose-invert max-w-none text-neutral-200 break-words overflow-hidden">
-              {@html bibliography}
-            </div>
-          </div>
-        </section>
+        <div class="grid grid-cols-2 gap-2 mt-auto">
+          <button
+            type="button"
+            on:click={prevChunk}
+            disabled={!canPrevChunk}
+            class="rounded-lg px-3 py-2 text-sm ring-1 ring-neutral-700 bg-neutral-950 enabled:hover:ring-neutral-500 disabled:opacity-40"
+          >
+            Previous card
+          </button>
+          <button
+            type="button"
+            on:click={nextChunk}
+            class="rounded-lg px-3 py-2 text-sm ring-1 ring-amber-300/40 bg-amber-500/15 text-amber-100 hover:ring-amber-300"
+          >
+            {canNextChunk ? "Next card" : activeSectionIndex < allSections.length - 1 ? "Next section" : "Done"}
+          </button>
+        </div>
+      </section>
     </main>
-    
 
-    <footer class="pt-4 text-center text-xs text-neutral-500">
-      © {new Date().getFullYear()} Leonardo Rodolico · Presentation
-    </footer>
+    <footer class="text-center text-[11px] text-neutral-500">© {new Date().getFullYear()} Leonardo Rodolico · Single-page interactive briefing</footer>
   </div>
 </div>
 
+<style>
+  .content-frame {
+    height: clamp(360px, 62dvh, 760px);
+  }
 
+  .slide-content :global(img) {
+    max-height: 26vh;
+    max-width: 100%;
+    width: auto;
+    margin: 0.5rem auto;
+    border-radius: 0.75rem;
+    border: 1px solid rgba(251, 191, 36, 0.25);
+    display: block;
+    object-fit: contain;
+  }
+
+  .media-frame :global(img) {
+    width: 100%;
+    max-height: 36vh;
+    margin: 0;
+    border-radius: 0.75rem;
+    border: 1px solid rgba(251, 191, 36, 0.25);
+    object-fit: cover;
+  }
+
+  .content-split {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(260px, 34%);
+    gap: 1rem;
+    align-items: start;
+  }
+
+  .media-column {
+    height: 100%;
+    display: flex;
+    align-items: center;
+  }
+
+  .media-stack {
+    display: grid;
+    gap: 0.75rem;
+  }
+
+  @media (max-width: 900px) {
+    .content-split {
+      grid-template-columns: 1fr;
+    }
+
+    .slide-content :global(img) {
+      max-width: 100%;
+      width: auto;
+      margin: 0.75rem auto;
+      display: block;
+    }
+
+    .media-frame {
+      margin-top: 0.5rem;
+    }
+  }
+
+  .slide-content :global(ol),
+  .slide-content :global(ul) {
+    margin-top: 0.35rem;
+    margin-bottom: 0.35rem;
+  }
+
+  .slide-content :global(h3) {
+    margin-top: 0.35rem;
+    margin-bottom: 0.25rem;
+  }
+</style>
