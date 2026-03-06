@@ -114,11 +114,11 @@
         <div class="mt-6 flex flex-wrap gap-3">
           <a href="#projects" class="px-4 py-2 rounded-xl bg-cyan-500/20 text-cyan-100 ring-1 ring-cyan-500/40 text-sm hover:ring-cyan-300">Explore projects</a>
           <a href="#contact" class="px-4 py-2 rounded-xl bg-zinc-900 ring-1 ring-zinc-800 text-sm hover:ring-zinc-500">Get in touch</a>
-          <a
-            href="/resume.pdf"
-            download
-            class="px-4 py-2 rounded-xl bg-zinc-900 ring-1 ring-zinc-800 text-sm hover:ring-zinc-500"
-          >
+            <a
+              href="/resume-leo-rodolico.pdf"
+              download
+              class="px-4 py-2 rounded-xl bg-zinc-900 ring-1 ring-zinc-800 text-sm hover:ring-zinc-500"
+            >
             Download resume
           </a>
           <button
