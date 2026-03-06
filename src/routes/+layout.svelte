@@ -6,6 +6,7 @@
 </script>
 
 <svelte:head>
+	<title>Leo Rodolico</title>
 	<link rel="icon" href={favicon} />
 </svelte:head>
 
