@@ -612,17 +612,25 @@
 
 <svelte:window on:keydown={handleKeydown} />
 
-<div class="h-[100dvh] overflow-hidden bg-neutral-950 text-neutral-100 font-sans">
+<div class="min-h-screen bg-neutral-950 text-neutral-100 font-sans">
   <div class="pointer-events-none absolute inset-0">
     <div class="absolute -top-16 right-[15%] h-64 w-64 rounded-full bg-amber-400/10 blur-3xl"></div>
     <div class="absolute top-44 -left-16 h-72 w-72 rounded-full bg-cyan-500/10 blur-3xl"></div>
   </div>
 
-  <div class="relative mx-auto h-full max-w-[1800px] p-3 md:p-4 grid grid-rows-[auto,1fr,auto] gap-3">
+  <div class="relative mx-auto max-w-[1800px] p-3 md:p-4 flex flex-col gap-3">
     <header class="rounded-2xl border border-amber-400/30 bg-neutral-900/80 px-4 py-3 md:px-6 md:py-4 flex items-center justify-between gap-4">
-      <div>
+      <div class="flex items-center gap-3 md:gap-4">
+        <a
+          href="/"
+          class="inline-flex items-center rounded-lg bg-neutral-950 ring-1 ring-neutral-700 px-3 py-2 text-xs text-neutral-200 hover:ring-neutral-500"
+        >
+          Home
+        </a>
+        <div>
         <h1 class="text-xl md:text-2xl font-semibold tracking-tight text-amber-300">Benchmarking Quantum Annealing</h1>
         <p class="text-xs md:text-sm text-neutral-400">Interactive briefing · Use arrow keys to navigate</p>
+      </div>
       </div>
       <div class="text-xs text-right text-neutral-400">
         <div>Section {activeSectionIndex + 1} / {allSections.length}</div>
@@ -630,8 +638,8 @@
       </div>
     </header>
 
-    <main class="min-h-0 h-full flex gap-3">
-      <aside class="w-72 shrink-0 h-full min-h-0 rounded-2xl border border-amber-400/30 bg-neutral-900/80 p-3 flex flex-col gap-2">
+    <main class="flex flex-col lg:flex-row gap-3 items-start">
+      <aside class="w-full lg:w-72 lg:shrink-0 rounded-2xl border border-amber-400/30 bg-neutral-900/80 p-3 flex flex-col gap-2">
         {#each allSections as section, idx}
           <button
             type="button"
@@ -647,13 +655,13 @@
           </button>
         {/each}
 
-        <div class="mt-auto grid grid-cols-2 gap-2 pt-2">
+        <div class="grid grid-cols-2 gap-2 pt-2">
           <button type="button" on:click={prevSection} class="rounded-lg bg-neutral-950 ring-1 ring-neutral-700 px-3 py-2 text-xs hover:ring-neutral-500">Prev section</button>
           <button type="button" on:click={nextSection} class="rounded-lg bg-neutral-950 ring-1 ring-neutral-700 px-3 py-2 text-xs hover:ring-neutral-500">Next section</button>
         </div>
       </aside>
 
-      <section class="min-w-0 flex-1 h-full min-h-0 rounded-2xl border border-amber-400/30 bg-neutral-900/80 p-5 md:p-6 flex flex-col gap-3">
+      <section class="min-w-0 w-full flex-1 rounded-2xl border border-amber-400/30 bg-neutral-900/80 p-5 md:p-6 flex flex-col gap-3">
         <div class="flex items-center justify-between gap-3">
           <h2 class="text-lg md:text-2xl font-semibold text-amber-100 leading-tight">{activeSection.question}</h2>
           {#if activeSection.id === 1}
@@ -667,9 +675,9 @@
           {/if}
         </div>
 
-        <div class="content-frame min-h-0 rounded-xl border border-amber-400/20 bg-neutral-950/70 p-4 md:p-5 overflow-hidden">
+        <div class="content-frame rounded-xl border border-amber-400/20 bg-neutral-950/70 p-4 md:p-5">
           {#if hasImages}
-            <div class="content-split h-full overflow-y-auto pr-2">
+            <div class="content-split pr-2">
               <article class="slide-content prose prose-invert max-w-none text-sm md:text-base">
                 {@html chunkTextHtml}
               </article>
@@ -684,7 +692,7 @@
               </aside>
             </div>
           {:else}
-            <article class="slide-content h-full overflow-y-auto pr-2 prose prose-invert max-w-none text-sm md:text-base">
+            <article class="slide-content pr-2 prose prose-invert max-w-none text-sm md:text-base">
               {@html activeChunk}
             </article>
           {/if}
@@ -722,10 +730,6 @@
 </div>
 
 <style>
-  .content-frame {
-    height: clamp(360px, 62dvh, 760px);
-  }
-
   .slide-content :global(img) {
     max-height: 26vh;
     max-width: 100%;

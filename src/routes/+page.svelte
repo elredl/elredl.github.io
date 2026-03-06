@@ -1,6 +1,6 @@
 <script>
   const email = "leonardo.rodolico@colostate.edu";
-  const location = "Boston, MA";
+  const location = "Fort Collins, CO";
   const availability = "Open to PhD opportunities (2026 start)";
 
   const stats = [
@@ -80,8 +80,8 @@
       : projects.filter((project) => project.tags.includes(activeTag));
 </script>
 
-<div class="relative min-h-screen bg-gradient-to-b from-zinc-950 via-black to-zinc-950 text-zinc-100 overflow-hidden">
-  <div class="pointer-events-none absolute inset-0">
+<div class="relative min-h-screen bg-gradient-to-b from-zinc-950 via-black to-zinc-950 text-zinc-100">
+  <div class="pointer-events-none absolute inset-0 overflow-hidden">
     <div class="absolute -top-20 right-[10%] h-72 w-72 rounded-full bg-cyan-500/10 blur-3xl"></div>
     <div class="absolute top-64 -left-24 h-80 w-80 rounded-full bg-fuchsia-500/10 blur-3xl"></div>
     <div class="absolute bottom-[-10%] right-[-5%] h-96 w-96 rounded-full bg-amber-400/10 blur-3xl"></div>
@@ -198,9 +198,9 @@
           <div class="rounded-2xl bg-gradient-to-r from-zinc-900/80 via-zinc-900/40 to-zinc-950 ring-1 ring-zinc-800 p-5">
             <div class="text-xs uppercase tracking-[0.3em] text-zinc-400">Now building</div>
             <p class="mt-3 text-sm text-zinc-300">
-              A research toolkit for sensor-readout analysis, real-system simulation baselines, and practical error-correction tests.
+              Preparing PhD applications while helping organize CSU's inaugural quantum computing hackathon.
             </p>
-            <a href="#projects" class="mt-4 inline-flex items-center text-xs uppercase tracking-widest text-cyan-300 hover:text-cyan-200">
+            <a href="/progress" class="mt-4 inline-flex items-center text-xs uppercase tracking-widest text-cyan-300 hover:text-cyan-200">
               View progress →
             </a>
           </div>
@@ -287,7 +287,7 @@
             <div class="mt-3 text-sm text-zinc-300">
               Weekly notes covering datasets, solver configs, and quick experiments. Ask for access if you want to collaborate.
             </div>
-            <a href="#contact" class="mt-4 inline-flex items-center text-xs uppercase tracking-widest text-cyan-300 hover:text-cyan-200">
+            <a href="/request-access" class="mt-4 inline-flex items-center text-xs uppercase tracking-widest text-cyan-300 hover:text-cyan-200">
               Request access →
             </a>
           </div>
@@ -338,8 +338,8 @@
   </main>
 
   <!-- Footer -->
-  <footer class="max-w-6xl mx-auto px-4 pb-16 text-xs text-zinc-400">
-    <div class="h-px bg-gradient-to-r from-transparent via-zinc-800 to-transparent my-8"></div>
+  <footer class="max-w-6xl mx-auto px-4 pb-6 text-xs text-zinc-400">
+    <div class="h-px bg-gradient-to-r from-transparent via-zinc-800 to-transparent my-5"></div>
     <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-2">
       <p>© {new Date().getFullYear()} Leo Rodolico. Built with SvelteKit & Tailwind.</p>
       <p>
