@@ -1,354 +1,267 @@
-<script>
-  const email = "leonardo.rodolico@colostate.edu";
-  const location = "Fort Collins, CO";
-  const availability = "Open to PhD opportunities (2026 start)";
+<script lang="ts">
+  import { onMount } from 'svelte';
 
-  const stats = [
-    { label: "Focus", value: "Quantum sensing" },
-    { label: "Applied", value: "Real-system simulation" },
-    { label: "Current", value: "Error correction methods" },
-    { label: "Looking", value: "Research collaborators" }
-  ];
+  type Star = { x: number; y: number; r: number; rot: number; op: number; dur: number; del: number };
+  let stars: Star[] = [];
 
-  const focusAreas = [
-    "Quantum sensing protocols and hardware-aware modeling",
-    "Simulation of real physical systems",
-    "Quantum error correction and noise mitigation",
-    "Experiment design and reproducible analysis"
-  ];
-
-  const toolStack = ["SvelteKit", "Python", "D-Wave Ocean", "PyTorch", "Julia", "Qiskit"];
-
-  const quickLinks = [
-    { label: "Email", href: "#contact" },
-    { label: "Latest work", href: "#projects" },
-    { label: "Notes", href: "#research" }
-  ];
-
-  const projects = [
-    {
-      title: "Exploration into Quantum Benchmarking",
-      description: "Interactive benchmark explorer for comparing classical and quantum annealers.",
-      link: "annealing",
-      tags: ["Benchmarking", "Quantum", "Visualization"],
-      status: "Live",
-      year: "2024"
-    }
-  ];
-
-  const research = [
-    {
-      title: "Coming soon",
-      description: "Research notes will live here as projects mature.",
-      year: "2026",
-      link: "#contact"
-    }
-  ];
-
-  let activeTag = "All";
-  let copied = false;
-
-  const tags = [
-    "All",
-    ...Array.from(new Set(projects.flatMap((project) => project.tags)))
-  ];
-
-  const copyEmail = async () => {
-    if (typeof navigator === "undefined" || !navigator.clipboard) {
-      if (typeof window !== "undefined") {
-        window.location.href = `mailto:${email}`;
-      }
-      return;
-    }
-
-    try {
-      await navigator.clipboard.writeText(email);
-      copied = true;
-      setTimeout(() => {
-        copied = false;
-      }, 2000);
-    } catch (error) {
-      if (typeof window !== "undefined") {
-        window.location.href = `mailto:${email}`;
-      }
-    }
-  };
-
-  $: filteredProjects =
-    activeTag === "All"
-      ? projects
-      : projects.filter((project) => project.tags.includes(activeTag));
+  onMount(() => {
+    stars = Array.from({ length: 65 }, () => ({
+      x: Math.random() * 1000,
+      y: Math.random() * 600,
+      r: Math.random() * 1.8 + 0.7,
+      rot: Math.random() * 45,
+      op: Math.random() * 0.45 + 0.1,
+      dur: Math.random() * 5 + 3,
+      del: -(Math.random() * 8),
+    }));
+  });
 </script>
 
-<div class="relative min-h-screen bg-gradient-to-b from-zinc-950 via-black to-zinc-950 text-zinc-100">
-  <div class="pointer-events-none absolute inset-0 overflow-hidden">
-    <div class="absolute -top-20 right-[10%] h-72 w-72 rounded-full bg-cyan-500/10 blur-3xl"></div>
-    <div class="absolute top-64 -left-24 h-80 w-80 rounded-full bg-fuchsia-500/10 blur-3xl"></div>
-    <div class="absolute bottom-[-10%] right-[-5%] h-96 w-96 rounded-full bg-amber-400/10 blur-3xl"></div>
+<div class="screen">
+  <!-- Star field -->
+  <svg class="star-field" viewBox="0 0 1000 600" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+    <defs>
+      <!-- 4-pointed sparkle: outer radius 1, inner radius 0.18 -->
+      <path id="sparkle" d="M0,-1 L0.18,-0.18 L1,0 L0.18,0.18 L0,1 L-0.18,0.18 L-1,0 L-0.18,-0.18 Z" />
+    </defs>
+    {#each stars as s}
+      <use
+        href="#sparkle"
+        transform="translate({s.x},{s.y}) rotate({s.rot}) scale({s.r})"
+        fill="white"
+        class="star"
+        style="--op:{s.op}; --dur:{s.dur}s; --del:{s.del}s"
+      />
+    {/each}
+  </svg>
+
+  <div class="qubit-wrap">
+    <svg class="qubit-svg" viewBox="0 0 900 520" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <radialGradient id="core" cx="50%" cy="50%" r="50%">
+          <stop offset="0%"   stop-color="#1a4a7a" stop-opacity="0.55" />
+          <stop offset="40%"  stop-color="#0a2540" stop-opacity="0.3" />
+          <stop offset="100%" stop-color="#000510" stop-opacity="0" />
+        </radialGradient>
+        <filter id="soft-glow" x="-30%" y="-30%" width="160%" height="160%">
+          <feGaussianBlur stdDeviation="12" result="blur"/>
+          <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+        </filter>
+        <filter id="line-glow" x="-100%" y="-100%" width="300%" height="300%">
+          <feGaussianBlur stdDeviation="2" result="blur"/>
+          <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+        </filter>
+        <filter id="particle-glow" x="-200%" y="-200%" width="500%" height="500%">
+          <feGaussianBlur in="SourceGraphic" stdDeviation="2.5" result="blur"/>
+          <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+        </filter>
+      </defs>
+
+      <!-- Central radial glow (no solid sphere) -->
+      <ellipse cx="450" cy="275" rx="200" ry="140" fill="url(#core)" filter="url(#soft-glow)" class="core-aura"/>
+
+      <!-- Orbital 1 — tilted upper-left → lower-right -->
+      <ellipse cx="450" cy="275" rx="370" ry="100" fill="none"
+        stroke="rgba(140,175,210,0.45)" stroke-width="1.2"
+        transform="rotate(-30 450 275)" />
+
+      <!-- Orbital 2 — roughly horizontal -->
+      <ellipse cx="450" cy="275" rx="370" ry="100" fill="none"
+        stroke="rgba(140,175,210,0.45)" stroke-width="1.2"
+        transform="rotate(5 450 275)" />
+
+      <!-- Orbital 3 — highlighted, tilted upper-right → lower-left -->
+      <ellipse cx="450" cy="275" rx="370" ry="100" fill="none"
+        stroke="rgba(30,140,230,0.75)" stroke-width="1.5"
+        transform="rotate(38 450 275)" filter="url(#line-glow)" />
+
+      <!-- Particles: each group rotates to match its orbital plane -->
+
+      <!-- Orbital 1 particle (gray, -30°) -->
+      <g transform="translate(450,275) rotate(-30)">
+        <circle r="3" fill="rgba(160,200,230,0.95)" filter="url(#particle-glow)">
+          <animateMotion dur="9s" repeatCount="indefinite"
+            path="M 370,0 A 370,100 0 1,1 -370,0 A 370,100 0 1,1 370,0" />
+        </circle>
+      </g>
+
+      <!-- Orbital 2 particle (gray, 5°, opposite direction) -->
+      <g transform="translate(450,275) rotate(5)">
+        <circle r="3" fill="rgba(160,200,230,0.95)" filter="url(#particle-glow)">
+          <animateMotion dur="11s" repeatCount="indefinite"
+            path="M -370,0 A 370,100 0 1,0 370,0 A 370,100 0 1,0 -370,0" />
+        </circle>
+      </g>
+
+      <!-- Orbital 3 particle (blue, 38°) -->
+      <g transform="translate(450,275) rotate(38)">
+        <circle r="3.5" fill="rgba(60,170,255,0.95)" filter="url(#particle-glow)">
+          <animateMotion dur="7s" repeatCount="indefinite"
+            path="M 370,0 A 370,100 0 1,1 -370,0 A 370,100 0 1,1 370,0" />
+        </circle>
+      </g>
+    </svg>
+
+    <!-- Name centered in glow -->
+    <div class="name-center">Leo Rodolico</div>
+
+    <!-- Nav buttons at orbital wingtips -->
+    <a href="/about"    class="nav-pill nav-about">About</a>
+    <a href="/projects" class="nav-pill nav-projects">Projects</a>
+    <a href="/research" class="nav-pill nav-research">Research</a>
+    <a href="/contact"  class="nav-pill nav-contact">Contact</a>
   </div>
 
-  <!-- Top nav -->
-  <div class="sticky top-0 z-20 backdrop-blur bg-black/40 border-b border-zinc-800">
-    <nav class="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between">
-      <a href="#top" class="text-xs tracking-[0.35em] uppercase text-zinc-300">LEO RODOLICO</a>
-      <div class="hidden md:flex items-center gap-6 text-sm text-zinc-300">
-        <a href="#about" class="hover:text-white">About</a>
-        <a href="#projects" class="hover:text-white">Projects</a>
-        <a href="#research" class="hover:text-white">Research</a>
-        <a href="#contact" class="hover:text-white">Contact</a>
-      </div>
-    </nav>
-  </div>
-
-  <!-- Hero -->
-  <header id="top" class="max-w-6xl mx-auto px-4 pt-16 md:pt-24 pb-12 relative">
-    <div class="grid lg:grid-cols-[1.3fr,0.7fr] gap-10 items-start">
-      <div>
-        <p class="text-[10px] tracking-[0.35em] uppercase text-zinc-400">Quantum × Machine Learning × Artificial Intelligence</p>
-        <h1 class="text-4xl md:text-6xl font-semibold mt-3 leading-tight">
-          Leo Rodolico
-        </h1>
-        <p class="mt-5 text-zinc-300 max-w-2xl text-lg">
-          Prospective PhD student focused on quantum sensing, physically realistic simulation, and practical error correction.
-        </p>
-        <div class="mt-6 flex flex-wrap gap-3">
-          <a href="#projects" class="px-4 py-2 rounded-xl bg-cyan-500/20 text-cyan-100 ring-1 ring-cyan-500/40 text-sm hover:ring-cyan-300">Explore projects</a>
-          <a href="#contact" class="px-4 py-2 rounded-xl bg-zinc-900 ring-1 ring-zinc-800 text-sm hover:ring-zinc-500">Get in touch</a>
-            <a
-              href="/resume-leo-rodolico.pdf"
-              download
-              class="px-4 py-2 rounded-xl bg-zinc-900 ring-1 ring-zinc-800 text-sm hover:ring-zinc-500"
-            >
-            Download resume
-          </a>
-          <button
-            type="button"
-            on:click={copyEmail}
-            class="px-4 py-2 rounded-xl bg-zinc-900 ring-1 ring-zinc-800 text-sm hover:ring-zinc-500"
-          >
-            {copied ? "Email copied" : "Copy email"}
-          </button>
-        </div>
-
-        <div class="mt-8 grid grid-cols-2 md:grid-cols-4 gap-3">
-          {#each stats as stat}
-            <div class="px-4 py-3 rounded-xl bg-zinc-900/70 ring-1 ring-zinc-800">
-              <div class="text-xs text-zinc-400 mb-1 uppercase tracking-widest">{stat.label}</div>
-              <div class="text-sm md:text-base font-medium text-zinc-100">{stat.value}</div>
-            </div>
-          {/each}
-        </div>
-      </div>
-
-      <div class="space-y-4">
-        <div class="rounded-2xl bg-gradient-to-br from-zinc-900/60 via-zinc-900/40 to-zinc-950/80 ring-1 ring-zinc-800 p-5">
-          <div class="text-xs uppercase tracking-[0.3em] text-zinc-400">Availability</div>
-          <div class="mt-2 text-lg font-medium text-zinc-100">{availability}</div>
-          <div class="mt-4 text-xs text-zinc-400">Based in {location}. Open to remote collaborations.</div>
-        </div>
-        <div class="rounded-2xl bg-zinc-900/70 ring-1 ring-zinc-800 p-5">
-          <div class="text-xs uppercase tracking-[0.3em] text-zinc-400">Quick links</div>
-          <div class="mt-3 flex flex-wrap gap-2">
-            {#each quickLinks as link}
-              <a href={link.href} class="px-3 py-1.5 rounded-full bg-zinc-950/70 ring-1 ring-zinc-800 text-xs hover:ring-zinc-500">
-                {link.label}
-              </a>
-            {/each}
-          </div>
-        </div>
-      </div>
-    </div>
-  </header>
-
-  <main class="max-w-6xl mx-auto px-4">
-    <!-- About -->
-    <section id="about" class="scroll-mt-28 py-14 md:py-20">
-      <div class="flex items-center gap-3 mb-6">
-        <div class="h-px w-10 bg-gradient-to-r from-transparent via-cyan-400 to-transparent"></div>
-        <h2 class="text-2xl md:text-3xl font-semibold tracking-tight">About</h2>
-      </div>
-      <div class="grid md:grid-cols-2 gap-8">
-        <div class="space-y-4 text-zinc-300 text-base leading-relaxed">
-          <p>
-            I build exploratory tools for quantum sensing and the simulation of real systems. My work blends theory with hands-on
-            experimentation, with a strong emphasis on rigorous validation and transparent failure analysis.
-          </p>
-          <p>
-            I enjoy collaborating with labs and startups pushing applied quantum research. If you want to evaluate sensing
-            protocols, compare simulation pipelines, or prototype error-correction workflows, I would love to help.
-          </p>
-          <div class="flex flex-wrap gap-2">
-            {#each toolStack as tool}
-              <span class="px-3 py-1.5 rounded-full bg-zinc-900/70 ring-1 ring-zinc-800 text-xs text-zinc-200">{tool}</span>
-            {/each}
-          </div>
-        </div>
-        <div class="space-y-4">
-          <div class="rounded-2xl bg-zinc-900/70 ring-1 ring-zinc-800 p-5">
-            <div class="text-xs uppercase tracking-[0.3em] text-zinc-400">Focus areas</div>
-            <ul class="mt-4 space-y-2 text-sm text-zinc-200">
-              {#each focusAreas as area}
-                <li class="flex items-start gap-2">
-                  <span class="mt-1 h-2 w-2 rounded-full bg-cyan-400"></span>
-                  <span>{area}</span>
-                </li>
-              {/each}
-            </ul>
-          </div>
-          <div class="rounded-2xl bg-gradient-to-r from-zinc-900/80 via-zinc-900/40 to-zinc-950 ring-1 ring-zinc-800 p-5">
-            <div class="text-xs uppercase tracking-[0.3em] text-zinc-400">Now building</div>
-            <p class="mt-3 text-sm text-zinc-300">
-              Preparing PhD applications while helping organize CSU's inaugural quantum computing hackathon.
-            </p>
-            <a href="/progress" class="mt-4 inline-flex items-center text-xs uppercase tracking-widest text-cyan-300 hover:text-cyan-200">
-              View progress →
-            </a>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- Projects -->
-    <section id="projects" class="scroll-mt-28 py-14 md:py-20">
-      <div class="flex items-center gap-3 mb-4">
-        <div class="h-px w-10 bg-gradient-to-r from-transparent via-fuchsia-400 to-transparent"></div>
-        <h2 class="text-2xl md:text-3xl font-semibold tracking-tight">Projects</h2>
-      </div>
-      <div class="flex flex-wrap gap-2 mb-6">
-        {#each tags as tag}
-          <button
-            type="button"
-            aria-pressed={activeTag === tag}
-            class={`px-3 py-1.5 rounded-full text-xs ring-1 transition ${
-              activeTag === tag
-                ? "bg-cyan-500/20 text-cyan-100 ring-cyan-500/50"
-                : "bg-zinc-900/70 text-zinc-300 ring-zinc-800 hover:ring-zinc-500"
-            }`}
-            on:click={() => (activeTag = tag)}
-          >
-            {tag}
-          </button>
-        {/each}
-      </div>
-
-      <div class="grid md:grid-cols-2 gap-5">
-        {#each filteredProjects as project}
-          <a href={project.link} class="block group">
-            <div class="relative p-[1px] rounded-2xl bg-gradient-to-r from-zinc-800 via-zinc-700 to-zinc-800">
-              <div class="rounded-2xl h-full bg-zinc-950/70 ring-1 ring-zinc-800 p-5">
-                <div class="flex items-center justify-between mb-2">
-                  <h3 class="text-lg font-medium">{project.title}</h3>
-                  <svg width="18" height="18" viewBox="0 0 24 24" class="opacity-60 group-hover:opacity-100">
-                    <path fill="currentColor" d="M14 3h7v7h-2V6.41l-9.29 9.3-1.42-1.42 9.3-9.29H14zM5 5h5V3H3v7h2z" />
-                  </svg>
-                </div>
-                <p class="text-zinc-300 mb-3">{project.description}</p>
-                <div class="flex flex-wrap items-center gap-2 mb-4">
-                  <span class="px-2 py-1 rounded-full bg-zinc-900/70 ring-1 ring-zinc-800 text-xs text-zinc-200">{project.status}</span>
-                  <span class="px-2 py-1 rounded-full bg-zinc-900/70 ring-1 ring-zinc-800 text-xs text-zinc-200">{project.year}</span>
-                </div>
-                <div class="flex flex-wrap gap-2">
-                  {#each project.tags as tag}
-                    <span class="px-2 py-1 rounded-full bg-zinc-900/70 ring-1 ring-zinc-800 text-xs">{tag}</span>
-                  {/each}
-                </div>
-              </div>
-            </div>
-          </a>
-        {/each}
-      </div>
-      {#if filteredProjects.length === 0}
-        <div class="mt-6 text-sm text-zinc-400">No projects tagged with "{activeTag}" yet.</div>
-      {/if}
-    </section>
-
-    <!-- Research -->
-    <section id="research" class="scroll-mt-28 py-14 md:py-20">
-      <div class="flex items-center gap-3 mb-6">
-        <h2 class="text-2xl md:text-3xl font-semibold tracking-tight">Research & Notes</h2>
-      </div>
-      <div class="grid lg:grid-cols-[1.1fr,0.9fr] gap-8">
-        <div class="relative pl-6">
-          <div class="absolute left-1 top-0 bottom-0 w-px bg-gradient-to-b from-cyan-500/40 via-zinc-700 to-fuchsia-500/40"></div>
-          <div class="space-y-6">
-            {#each research as item}
-              <a href={item.link} class="relative block group">
-                <div class="absolute -left-[13px] top-1 w-3 h-3 rounded-full bg-cyan-400/90 shadow-[0_0_25px_2px_rgba(34,211,238,0.45)]"></div>
-                <div class="text-xs text-zinc-400">{item.year}</div>
-                <div class="text-sm md:text-base text-zinc-200 font-medium group-hover:text-white">{item.title}</div>
-                <div class="text-sm text-zinc-400">{item.description}</div>
-              </a>
-            {/each}
-          </div>
-        </div>
-        <div class="space-y-4">
-          <div class="rounded-2xl bg-zinc-900/70 ring-1 ring-zinc-800 p-5">
-            <div class="text-xs uppercase tracking-[0.3em] text-zinc-400">Lab log</div>
-            <div class="mt-3 text-sm text-zinc-300">
-              Weekly notes covering datasets, solver configs, and quick experiments. Ask for access if you want to collaborate.
-            </div>
-            <a href="/request-access" class="mt-4 inline-flex items-center text-xs uppercase tracking-widest text-cyan-300 hover:text-cyan-200">
-              Request access →
-            </a>
-          </div>
-          <div class="rounded-2xl bg-gradient-to-br from-zinc-900/60 via-zinc-900/30 to-zinc-950 ring-1 ring-zinc-800 p-5">
-            <div class="text-xs uppercase tracking-[0.3em] text-zinc-400">Speaking</div>
-            <div class="mt-3 text-sm text-zinc-300">Available for workshops on sensing workflows, simulation methods, and QEC basics.</div>
-            <div class="mt-4 text-xs text-zinc-400">Topics: quantum sensing, real-system models, error correction.</div>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <section id="contact" class="scroll-mt-28 py-14 md:py-20">
-      <div class="flex items-center gap-3 mb-6">
-        <h2 class="text-2xl md:text-3xl font-semibold tracking-tight">Contact</h2>
-      </div>
-      <div class="grid md:grid-cols-2 gap-6">
-        <div class="rounded-2xl bg-zinc-900/70 ring-1 ring-zinc-800 p-6">
-          <div class="text-xs uppercase tracking-[0.3em] text-zinc-400">Email</div>
-          <div class="mt-3 text-lg font-medium text-zinc-100">{email}</div>
-          <div class="mt-2 text-xs text-zinc-400">Typically replies within 48 hours.</div>
-          <div class="mt-5 flex flex-wrap gap-3">
-            <button
-              type="button"
-              on:click={copyEmail}
-              class="px-4 py-2 rounded-xl bg-cyan-500/20 text-cyan-100 ring-1 ring-cyan-500/40 text-sm hover:ring-cyan-300"
-            >
-              {copied ? "Copied" : "Copy email"}
-            </button>
-            <a href={`mailto:${email}`} class="px-4 py-2 rounded-xl bg-zinc-950 ring-1 ring-zinc-800 text-sm hover:ring-zinc-500">
-              Compose message
-            </a>
-          </div>
-        </div>
-        <div class="rounded-2xl bg-gradient-to-br from-zinc-900/60 via-zinc-900/30 to-zinc-950 ring-1 ring-zinc-800 p-6">
-          <div class="text-xs uppercase tracking-[0.3em] text-zinc-400">Collaboration</div>
-          <div class="mt-3 text-sm text-zinc-300">
-            For collaborations, send a short brief with your sensing setup or target system, current model assumptions, and evaluation goals.
-          </div>
-          <div class="mt-4 flex flex-wrap gap-2">
-            <span class="px-3 py-1.5 rounded-full bg-zinc-950/70 ring-1 ring-zinc-800 text-xs text-zinc-200">Quantum sensing</span>
-            <span class="px-3 py-1.5 rounded-full bg-zinc-950/70 ring-1 ring-zinc-800 text-xs text-zinc-200">System simulation</span>
-            <span class="px-3 py-1.5 rounded-full bg-zinc-950/70 ring-1 ring-zinc-800 text-xs text-zinc-200">Error correction</span>
-          </div>
-        </div>
-      </div>
-    </section>
-  </main>
-
-  <!-- Footer -->
-  <footer class="max-w-6xl mx-auto px-4 pb-6 text-xs text-zinc-400">
-    <div class="h-px bg-gradient-to-r from-transparent via-zinc-800 to-transparent my-5"></div>
-    <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-2">
-      <p>© {new Date().getFullYear()} Leo Rodolico. Built with SvelteKit & Tailwind.</p>
-      <p>
-        <a href="#about" class="hover:text-zinc-200">About</a>
-        <span class="mx-2">·</span>
-        <a href="#projects" class="hover:text-zinc-200">Projects</a>
-        <span class="mx-2">·</span>
-        <a href="#contact" class="hover:text-zinc-200">Contact</a>
-      </p>
-    </div>
-  </footer>
+  <p class="tagline">Quantum &times; Machine Learning &times; AI</p>
 </div>
+
+<style>
+  .screen {
+    min-height: 100dvh;
+    background: #080d16;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 2.5rem;
+    overflow: hidden;
+    position: relative;
+  }
+
+  .star-field {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+  }
+
+  .star {
+    opacity: var(--op);
+    animation: twinkle var(--dur) var(--del) ease-in-out infinite;
+  }
+
+  @keyframes twinkle {
+    0%, 100% { opacity: var(--op); }
+    50%       { opacity: 0.02; }
+  }
+
+  /* Subtle film-grain texture */
+  .screen::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='1'/%3E%3C/svg%3E");
+    background-size: 200px 200px;
+    opacity: 0.03;
+    pointer-events: none;
+  }
+
+  /* Soft radial vignette */
+  .screen::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(ellipse at 50% 50%, transparent 40%, rgba(2, 5, 12, 0.7) 100%);
+    pointer-events: none;
+  }
+
+  /* Orbital widget — landscape ratio */
+  .qubit-wrap {
+    position: relative;
+    width: min(92vw, 900px);
+    height: min(52vw, 520px);
+  }
+
+  .qubit-svg {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+  }
+
+  .core-aura {
+    animation: breathe 4s ease-in-out infinite;
+  }
+  @keyframes breathe {
+    0%, 100% { opacity: 1; }
+    50%       { opacity: 0.6; }
+  }
+
+  /* Name label */
+  .name-center {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: clamp(1.4rem, 3.4vw, 2.4rem);
+    font-weight: 500;
+    color: rgba(240, 245, 255, 0.92);
+    letter-spacing: 0.02em;
+    white-space: nowrap;
+    pointer-events: none;
+  }
+
+  /* Circle nav buttons */
+  .nav-pill {
+    position: absolute;
+    width: clamp(56px, 7vw, 72px);
+    height: clamp(56px, 7vw, 72px);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: clamp(0.6rem, 1.1vw, 0.72rem);
+    font-weight: 500;
+    letter-spacing: 0.04em;
+    color: rgba(200, 220, 245, 0.8);
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    text-decoration: none;
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    transition: background 0.2s ease, border-color 0.2s ease, color 0.2s ease;
+    white-space: nowrap;
+    text-align: center;
+  }
+  .nav-pill:hover {
+    background: rgba(255, 255, 255, 0.09);
+    border-color: rgba(120, 170, 230, 0.35);
+    color: rgba(220, 235, 255, 0.95);
+  }
+
+  /* Button centers placed at computed orbital tip coordinates */
+  .nav-about {
+    left: 17.6%;
+    top: 9%;
+    transform: translate(-50%, -50%);
+  }
+  .nav-projects {
+    left: 85.6%;
+    top: 17.3%;
+    transform: translate(-50%, -50%);
+  }
+  .nav-research {
+    left: 9%;
+    top: 46.7%;
+    transform: translate(-50%, -50%);
+  }
+  .nav-contact {
+    left: 91%;
+    top: 59%;
+    transform: translate(-50%, -50%);
+  }
+
+  .tagline {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: clamp(0.6rem, 1.1vw, 0.7rem);
+    font-weight: 400;
+    letter-spacing: 0.28em;
+    text-transform: uppercase;
+    color: rgba(120, 145, 175, 0.4);
+    text-align: center;
+  }
+</style>
