@@ -1,23 +1,38 @@
 <script>
-  const email = "leonardo.rodolico@colostate.edu";
+  import { onMount } from 'svelte';
+
+  let stars = [];
+  onMount(() => {
+    stars = Array.from({ length: 65 }, () => ({
+      x: Math.random() * 1000,
+      y: Math.random() * 600,
+      r: Math.random() * 1.8 + 0.7,
+      rot: Math.random() * 45,
+      op: Math.random() * 0.35 + 0.08,
+      dur: Math.random() * 5 + 3,
+      del: -(Math.random() * 8),
+    }));
+  });
+
+  const email = "leoo@colostate.edu";
   const location = "Fort Collins, CO";
-  const availability = "Open to PhD opportunities (2026 start)";
+  const availability = "PhD student at Colorado State University";
 
   const stats = [
-    { label: "Focus", value: "Quantum sensing" },
-    { label: "Applied", value: "Real-system simulation" },
-    { label: "Current", value: "Error correction methods" },
-    { label: "Looking", value: "Research collaborators" }
+    { label: "Focus", value: "Quantum algorithms" },
+    { label: "Applied", value: "Quantum compilation" },
+    { label: "Current", value: "Error correction" },
+    { label: "Lab", value: "Qupacabras Lab" }
   ];
 
   const focusAreas = [
-    "Quantum sensing protocols and hardware-aware modeling",
-    "Simulation of real physical systems",
+    "Quantum algorithms and circuit design",
     "Quantum error correction and noise mitigation",
-    "Experiment design and reproducible analysis"
+    "Quantum compilation and hardware-aware optimization",
+    "Variational methods (VQE, QAOA) and quantum simulation"
   ];
 
-  const toolStack = ["SvelteKit", "Python", "D-Wave Ocean", "PyTorch", "Julia", "Qiskit"];
+  const toolStack = ["SvelteKit", "Python", "Qiskit", "Cirq", "PyTorch", "TensorFlow"];
 
   const quickLinks = [
     { label: "Email", href: "#contact" },
@@ -80,7 +95,23 @@
       : projects.filter((project) => project.tags.includes(activeTag));
 </script>
 
-<div class="relative min-h-screen bg-gradient-to-b from-zinc-950 via-black to-zinc-950 text-zinc-100">
+<!-- Star field (outside wrapper so fixed positioning is never broken by ancestor transforms) -->
+<svg class="star-field" viewBox="0 0 1000 600" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+  <defs>
+    <path id="sparkle2" d="M0,-1 L0.18,-0.18 L1,0 L0.18,0.18 L0,1 L-0.18,0.18 L-1,0 L-0.18,-0.18 Z" />
+  </defs>
+  {#each stars as s}
+    <use
+      href="#sparkle2"
+      transform="translate({s.x},{s.y}) rotate({s.rot}) scale({s.r})"
+      fill="white"
+      class="star"
+      style="--op:{s.op}; --dur:{s.dur}s; --del:{s.del}s"
+    />
+  {/each}
+</svg>
+
+<div class="relative min-h-screen text-zinc-100">
   <div class="pointer-events-none absolute inset-0 overflow-hidden">
     <div class="absolute -top-20 right-[10%] h-72 w-72 rounded-full bg-cyan-500/10 blur-3xl"></div>
     <div class="absolute top-64 -left-24 h-80 w-80 rounded-full bg-fuchsia-500/10 blur-3xl"></div>
@@ -109,7 +140,7 @@
           Leo Rodolico
         </h1>
         <p class="mt-5 text-zinc-300 max-w-2xl text-lg">
-          Prospective PhD student focused on quantum sensing, physically realistic simulation, and practical error correction.
+          PhD student in Computer Science at Colorado State University specializing in quantum algorithms, quantum error correction, and quantum compilation.
         </p>
         <div class="mt-6 flex flex-wrap gap-3">
           <a href="#projects" class="px-4 py-2 rounded-xl bg-cyan-500/20 text-cyan-100 ring-1 ring-cyan-500/40 text-sm hover:ring-cyan-300">Explore projects</a>
@@ -170,12 +201,12 @@
       <div class="grid md:grid-cols-2 gap-8">
         <div class="space-y-4 text-zinc-300 text-base leading-relaxed">
           <p>
-            I build exploratory tools for quantum sensing and the simulation of real systems. My work blends theory with hands-on
-            experimentation, with a strong emphasis on rigorous validation and transparent failure analysis.
+            I research quantum algorithms, error correction, and compilation at the Qupacabras Lab, CSU. My work spans
+            designing and running experiments on physical quantum hardware to advancing the state of the art in quantum computing.
           </p>
           <p>
-            I enjoy collaborating with labs and startups pushing applied quantum research. If you want to evaluate sensing
-            protocols, compare simulation pipelines, or prototype error-correction workflows, I would love to help.
+            I enjoy collaborating on problems at the intersection of quantum computing and machine learning. If you want to
+            explore quantum algorithm design, error correction workflows, or variational methods like VQE and QAOA, I would love to help.
           </p>
           <div class="flex flex-wrap gap-2">
             {#each toolStack as tool}
@@ -198,7 +229,7 @@
           <div class="rounded-2xl bg-gradient-to-r from-zinc-900/80 via-zinc-900/40 to-zinc-950 ring-1 ring-zinc-800 p-5">
             <div class="text-xs uppercase tracking-[0.3em] text-zinc-400">Now building</div>
             <p class="mt-3 text-sm text-zinc-300">
-              Preparing PhD applications while helping organize CSU's inaugural quantum computing hackathon.
+              Researching quantum error correction and compilation at the Qupacabras Lab, and co-organizing the first CSU quantum computing hackathon.
             </p>
             <a href="/progress" class="mt-4 inline-flex items-center text-xs uppercase tracking-widest text-cyan-300 hover:text-cyan-200">
               View progress →
@@ -325,12 +356,12 @@
         <div class="rounded-2xl bg-gradient-to-br from-zinc-900/60 via-zinc-900/30 to-zinc-950 ring-1 ring-zinc-800 p-6">
           <div class="text-xs uppercase tracking-[0.3em] text-zinc-400">Collaboration</div>
           <div class="mt-3 text-sm text-zinc-300">
-            For collaborations, send a short brief with your sensing setup or target system, current model assumptions, and evaluation goals.
+            For collaborations, send a short brief with your research goals, target system, and how quantum computing fits in.
           </div>
           <div class="mt-4 flex flex-wrap gap-2">
-            <span class="px-3 py-1.5 rounded-full bg-zinc-950/70 ring-1 ring-zinc-800 text-xs text-zinc-200">Quantum sensing</span>
-            <span class="px-3 py-1.5 rounded-full bg-zinc-950/70 ring-1 ring-zinc-800 text-xs text-zinc-200">System simulation</span>
+            <span class="px-3 py-1.5 rounded-full bg-zinc-950/70 ring-1 ring-zinc-800 text-xs text-zinc-200">Quantum algorithms</span>
             <span class="px-3 py-1.5 rounded-full bg-zinc-950/70 ring-1 ring-zinc-800 text-xs text-zinc-200">Error correction</span>
+            <span class="px-3 py-1.5 rounded-full bg-zinc-950/70 ring-1 ring-zinc-800 text-xs text-zinc-200">Quantum compilation</span>
           </div>
         </div>
       </div>
@@ -352,3 +383,29 @@
     </div>
   </footer>
 </div>
+
+<style>
+  :global(body) {
+    background: linear-gradient(to bottom, #09090b, #000000, #09090b);
+    background-attachment: fixed;
+  }
+
+  .star-field {
+    position: fixed;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .star {
+    opacity: var(--op);
+    animation: twinkle var(--dur) var(--del) ease-in-out infinite;
+  }
+
+  @keyframes twinkle {
+    0%, 100% { opacity: var(--op); }
+    50%       { opacity: 0.02; }
+  }
+</style>
